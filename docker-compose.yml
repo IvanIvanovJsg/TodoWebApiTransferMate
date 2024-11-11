@@ -1,0 +1,6 @@
+﻿services:
+  todowebapitransfermate:
+    image: todowebapitransfermate
+    build:
+      context: .
+      dockerfile: Dockerfile
