@@ -24,6 +24,14 @@ public class TodoTaskController : ControllerBase
         var tasks = await _todoTaskService.GetAllTodoTasksAsync();
         return tasks;
     }
+
+    [HttpGet("pending")]
+    public async Task<IEnumerable<TodoTaskDTO>> GetPendingTodoTasks()
+    {
+        var pendingTasks = await _todoTaskService.GetAllPendingTasksAsync();
+        
+        return pendingTasks;
+    }
     
     
     [HttpGet("{id}")]

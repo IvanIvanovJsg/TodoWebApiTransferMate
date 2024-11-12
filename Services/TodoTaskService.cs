@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoWebApiTransferMate.Data;
+using TodoWebApiTransferMate.Models;
 using TodoWebApiTransferMate.Models.DTOs;
 using TodoWebApiTransferMate.Models.Entities;
 
@@ -8,10 +9,12 @@ namespace TodoWebApiTransferMate.Services;
 public class TodoTaskService : ITodoTaskService
 {
     private readonly TodoDbContext _context;
+    private readonly ICurrentTimeProvider _currentTimeProvider;
 
-    public TodoTaskService(TodoDbContext context)
+    public TodoTaskService(TodoDbContext context, ICurrentTimeProvider currentTimeProvider)
     {
         _context = context;
+        _currentTimeProvider = currentTimeProvider;
     }
 
     public TodoTaskDTO TodoTaskToDTO(TodoTask todoTask)
@@ -20,6 +23,16 @@ public class TodoTaskService : ITodoTaskService
         {
             Id = todoTask.Id, Title = todoTask.Title, DueDate = todoTask.DueDate, State = todoTask.State,
         };
+    }
+
+    public async Task<IEnumerable<TodoTaskDTO>> GetAllPendingTasksAsync()
+    {
+        var pendingTasks = await _context.TodoTasks
+            .Where(x => x.State != TodoTaskState.Completed 
+                        && (x.DueDate == null || x.DueDate > _currentTimeProvider.GetCurrentTime()))
+            .ToListAsync();
+
+        return pendingTasks.Select(TodoTaskToDTO);
     }
 
     public async Task<TodoTaskDTO?> GetTodoTaskAsync(int id)

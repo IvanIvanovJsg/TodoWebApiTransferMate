@@ -10,4 +10,5 @@ public interface ITodoTaskService
     Task<TodoTaskDTO> CreateTodoTaskAsync(CreateTodoTaskDTO model);
     Task<bool> EditTodoTaskAsync(int id, EditTodoTaskDTO model);
     TodoTaskDTO TodoTaskToDTO(TodoTask todoTask);
+    Task<IEnumerable<TodoTaskDTO>> GetAllPendingTasksAsync();
 }
