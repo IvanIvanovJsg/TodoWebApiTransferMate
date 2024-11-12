@@ -1,8 +1,6 @@
-using System.Data.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoWebApiTransferMate.Data;
-using TodoWebApiTransferMate.Models;
 using TodoWebApiTransferMate.Models.DTOs;
 using TodoWebApiTransferMate.Models.Entities;
 using TodoWebApiTransferMate.Services;
@@ -13,33 +11,27 @@ namespace TodoWebApiTransferMate.Controllers;
 [Route("api/[controller]")]
 public class TodoTaskController : ControllerBase
 {
-    private readonly TodoDbContext _context;
     private readonly ITodoTaskService _todoTaskService;
 
-    public TodoTaskController(TodoDbContext context, ITodoTaskService todoTaskService)
+    public TodoTaskController(ITodoTaskService todoTaskService)
     {
-        _context = context;
         _todoTaskService = todoTaskService;
     }
 
     [HttpGet]
     public async Task<IEnumerable<TodoTaskDTO>> GetAllTodoTasks()
     {
-        return (await _context.TodoTasks.ToListAsync()).Select(x => _todoTaskService.TodoTaskToDTO(x));
+        var tasks = await _todoTaskService.GetAllTodoTasksAsync();
+        return tasks;
     }
     
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTodoTask(int id)
     {
-        var task = await _context.TodoTasks.FirstOrDefaultAsync(x => x.Id == id);
+        var task = await _todoTaskService.GetTodoTaskAsync(id);
 
-        if (task == null)
-        {
-            return NotFound("Task not found.");
-        }
-            
-        return Ok(_todoTaskService.TodoTaskToDTO(task));
+        return (task != null ? Ok(task) : NotFound("Task not found."));
     }
 
     [HttpPost]
@@ -50,16 +42,25 @@ public class TodoTaskController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var todoTask = new TodoTask()
-        {
-            Title = model.Title,
-            DueDate = model.DueDate,
-        };
-
-        await _context.TodoTasks.AddAsync(todoTask);
-        await _context.SaveChangesAsync();
+        var todoTask = await _todoTaskService.CreateTodoTaskAsync(model);
         
-        return CreatedAtAction(nameof(GetTodoTask), new {id = todoTask.Id }, _todoTaskService.TodoTaskToDTO(todoTask));
+        return CreatedAtAction(nameof(GetTodoTask), new {id = todoTask.Id }, todoTask);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditTodoTask(int id, EditTodoTaskDTO model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (!(await _todoTaskService.EditTodoTaskAsync(id, model)))
+        {
+            return NotFound("Task not found.");
+        }
+
+        return NoContent();
     }
 
 }
