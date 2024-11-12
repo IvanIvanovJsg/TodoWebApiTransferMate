@@ -4,12 +4,16 @@ using TodoWebApiTransferMate.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// TODO: See what to do with the connection string and the credentials in docker-compose
-// TODO: Change host name depending on who runs dotnet ef dattabase update
-// TODO: Force mindate to today
+var connectionStringHost = Environment.GetEnvironmentVariable("TODOAPI_DB_HOST");
+if (connectionStringHost == null)
+{
+    connectionStringHost = "localhost";
+}
 
 builder.Services.AddDbContext<TodoDbContext>(options =>
-    options.UseNpgsql("Host=db;Port=5432;Database=TodoDb;Username=transfermate;Password=transfermatepassword"));
+    options.UseNpgsql(
+        $"Host={connectionStringHost};Port=5432;Database=TodoDb;Username=transfermate;Password=transfermatepassword"));
+
 builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 builder.Services.AddScoped<ICurrentTimeProvider, CurrentTimeProvider>();
 
