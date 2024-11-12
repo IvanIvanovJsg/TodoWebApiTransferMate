@@ -4,8 +4,6 @@ using TodoWebApiTransferMate.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// TODO: Add logging middleware
-// TODO: Make swagger be on the main endpoint
 // TODO: See what to do with the connection string and the credentials in docker-compose
 // TODO: Change host name depending on who runs dotnet ef dattabase update
 // TODO: Force mindate to today
@@ -24,7 +22,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
+    });
 }
 
 app.UseHttpsRedirection();
