@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TodoWebApiTransferMate.Models;
+using TodoWebApiTransferMate.Models.Entities;
 
 namespace TodoWebApiTransferMate.Data;
 

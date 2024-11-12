@@ -1,6 +1,6 @@
 namespace TodoWebApiTransferMate.Models;
 
-public enum TaskState
+public enum TodoTaskState
 {
     InProgress, Completed
 }

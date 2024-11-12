@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TodoWebApiTransferMate.Models;
+namespace TodoWebApiTransferMate.Models.Entities;
 
 public class TodoTask
 {
@@ -14,5 +14,5 @@ public class TodoTask
     public DateTime? DueDate { get; set; }
     
     [Required]
-    public TaskState State { get; set; } = TaskState.InProgress;
+    public TodoTaskState State { get; set; } = TodoTaskState.InProgress;
 }
