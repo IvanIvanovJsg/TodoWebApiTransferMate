@@ -35,6 +35,15 @@ public class TodoTaskService : ITodoTaskService
         return pendingTasks.Select(TodoTaskToDTO);
     }
 
+    public async Task<IEnumerable<TodoTaskDTO>> GetAllOverdueTasksAsync()
+    {
+        var overdueTasks = await _context.TodoTasks
+            .Where(x => x.State != TodoTaskState.Completed && x.DueDate != null && x.DueDate < _currentTimeProvider.GetCurrentTime())
+            .ToListAsync();
+
+        return overdueTasks.Select(TodoTaskToDTO);
+    }
+
     public async Task<TodoTaskDTO?> GetTodoTaskAsync(int id)
     {
         var task = await _context.TodoTasks.FindAsync(id);

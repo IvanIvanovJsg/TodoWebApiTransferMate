@@ -33,6 +33,14 @@ public class TodoTaskController : ControllerBase
         return pendingTasks;
     }
     
+    [HttpGet("overdue")]
+    public async Task<IEnumerable<TodoTaskDTO>> GetOverdueTodoTasks()
+    {
+        var overdueTasks = await _todoTaskService.GetAllOverdueTasksAsync();
+        
+        return overdueTasks;
+    }
+    
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTodoTask(int id)
