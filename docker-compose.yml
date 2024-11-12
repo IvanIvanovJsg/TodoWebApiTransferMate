@@ -1,4 +1,12 @@
 ﻿services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: transfermate              
+      POSTGRES_PASSWORD: transfermatepassword      
+      POSTGRES_DB: TodoDb            
+    ports:
+      - "5432:5432"                      
   todowebapitransfermate:
     image: todowebapitransfermate
     build:
